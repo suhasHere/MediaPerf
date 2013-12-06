@@ -67,7 +67,7 @@ class AudioRecorder(threading.Thread):
       cmd = [str(s) for s in cmd]
       print " Running Record Command: %s" % cmd
       ret = subprocess.call(cmd,stdout=subprocess.PIPE,
-      						stderr=subprocess.PIPE)
+      			    stderr=subprocess.PIPE)
       if ret != 0:
       	print " Failed to record audio."
       else:

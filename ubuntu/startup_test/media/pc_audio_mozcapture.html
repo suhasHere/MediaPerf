@@ -1,0 +1,119 @@
+<html>
+<head>
+  <title>Simple PeerConnection Audio Test</title>
+  <script language="Javascript" type="text/javascript" src="/scripts/MozillaFileLogger.js"></script>
+   <script language="JavaScript" type="text/javascript" src="/page_load_test/quit.js"></script>
+</head>
+<body>
+
+<h1>Simple PeerConnection Audio Test</h1>
+
+<div><audio id="pc1audio" controls></audio></div><br/>
+<div><audio id="pc2audio"  controls></audio></div><br/>
+
+<div><audio id="localaudio" height="480" controls "></audio></div><br/>
+<div id="log"></div>
+
+<script type="application/javascript;version=1.8">
+  function log(msg) {
+    let div = document.getElementById("log");
+    div.innerHTML = div.innerHTML + "<p>" + msg + "</p>";
+  }
+
+  let pc1audio = document.getElementById("pc1audio");
+  let pc2audio = document.getElementById("pc2audio");
+
+  let localaudio = document.getElementById("localaudio");
+
+  let pc1;
+  let pc2;
+
+  let pc1_offer;
+  let pc2_answer;
+
+  function failed(code) {
+    alert("Something Failed " + code);
+    log("Failure callback: " + code);
+  }
+
+  // pc1.createOffer finished, call pc1.setLocal
+  function step1(offer) {
+    pc1_offer = offer;
+    pc1.setLocalDescription(offer, step2, failed);
+  }
+
+  // pc1.setLocal finished, call pc2.setRemote
+  function step2() {
+    pc2.setRemoteDescription(pc1_offer, step3, failed);
+  };
+
+  // pc2.setRemote finished, call pc2.createAnswer
+  function step3() {
+    pc2.createAnswer(step4, failed);
+  }
+
+  // pc2.createAnswer finished, call pc2.setLocal
+  function step4(answer) {
+    pc2_answer = answer;
+    pc2.setLocalDescription(answer, step5, failed);
+  }
+
+  // pc2.setLocal finished, call pc1.setRemote
+  function step5() {
+    pc1.setRemoteDescription(pc2_answer, step6, failed);
+  }
+
+  // pc1.setRemote finished, media should be running!
+  function step6() {
+    log("HIP HIP HOORAY");
+  }
+
+  function startTest() {
+
+    pc1 = new mozRTCPeerConnection();
+    pc2 = new mozRTCPeerConnection();
+
+    pc1.onaddstream = function(obj) {
+      log("pc1 got remote stream from pc2 " + obj.type);
+      // we are not playing audio to avoid noise
+      //pc2audio.mozSrcObject = obj.stream;
+      //pc2audio.play();
+    }
+    pc2.onaddstream = function(obj) {
+      log("pc2 got remote stream from pc1 " + obj.type);
+      pc1audio.mozSrcObject = obj.stream;
+      pc1audio.play();
+    }
+
+    localaudio.src = "input16.wav";
+    localaudio.addEventListener('ended', function(evt) {
+      end(true);
+    },false);
+
+    //localaudio.src = "input.ogg";
+    localaudio.vol = 0.9;
+    localAudioStream = localaudio.mozCaptureStreamUntilEnded();
+    localaudio.play();
+    //audio mediastream from the <audio> to the peer connection
+    pc1.addStream(localAudioStream);
+    navigator.mozGetUserMedia({audio:true,fake:true}, function(audio2) {
+      pc2.addStream(audio2);
+      // Start the signaling.
+      pc1.createOffer(step1, failed);
+    }, failed);
+ }
+
+  function end(status) {
+    if(window.dump) {
+      dumpLog('__startTimestamp' + Date.now() + '__endTimestamp\n');
+    }
+    pc1.close();
+    pc2.close();
+    goQuitApplication();
+    window.close();
+  }
+
+  startTest();
+</script>
+
+</html>

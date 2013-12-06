@@ -1,0 +1,108 @@
+basetest:
+  cleanup: null
+  cycles: 1
+  linux_counters: []
+  mac_counters: []
+  profile_path: ${talos}/base_profile
+  resolution: 1
+  responsiveness: false
+  rss: false
+  setup: null
+  shutdown: false
+  timeout: 3600
+  tpchrome: true
+  tpcycles: 10
+  tploadaboutblank: false
+  tpmozafterpaint: false
+  tpnoisy: true
+  tppagecycles: 1
+  tprender: false
+  w7_counters: []
+  win_counters: []
+  xperf_counters: []
+bcontroller_config: ${talos}/bcontroller.yml
+branch_name: ''
+browser_log: browser_output.txt
+browser_path: /home/suhasnandakumar/mozilla/mc_1/obj-ff-dbg/dist/bin/firefox
+browser_wait: 5
+buildid: testbuildid
+datazilla_urls:
+- ts.json
+develop: true
+deviceport: 20701
+dirs: {}
+env:
+  NO_EM_RESTART: '1'
+error_filename: /home/suhasnandakumar/webrtc-demos/MediaPerf/browser_failures.txt
+extensions:
+- ${talos}/pageloader
+extra_args: ''
+filters:
+- - ignore_max
+  - []
+- - median
+  - []
+init_url: http://localhost:15707/getInfo.html
+preferences:
+  app.update.enabled: false
+  browser.EULA.override: true
+  browser.bookmarks.max_backups: 0
+  browser.cache.disk.smart_size.enabled: false
+  browser.cache.disk.smart_size.first_run: false
+  browser.chrome.dynamictoolbar: false
+  browser.display.overlaynavbuttons: false
+  browser.dom.window.dump.enabled: true
+  browser.link.open_newwindow: 2
+  browser.safebrowsing.gethashURL: http://127.0.0.1/safebrowsing-dummy/gethash
+  browser.safebrowsing.keyURL: http://127.0.0.1/safebrowsing-dummy/newkey
+  browser.safebrowsing.updateURL: http://127.0.0.1/safebrowsing-dummy/update
+  browser.shell.checkDefaultBrowser: false
+  browser.warnOnQuit: false
+  dom.allow_scripts_to_close_windows: true
+  dom.disable_open_during_load: false
+  dom.disable_window_flip: true
+  dom.disable_window_move_resize: true
+  dom.max_chrome_script_run_time: 0
+  dom.max_script_run_time: 0
+  dom.send_after_paint_to_content: true
+  extensions.autoDisableScopes: 10
+  extensions.blocklist.enabled: false
+  extensions.blocklist.url: http://127.0.0.1/extensions-dummy/blocklistURL
+  extensions.checkCompatibility: false
+  extensions.enabledScopes: 5
+  extensions.getAddons.get.url: http://127.0.0.1/extensions-dummy/repositoryGetURL
+  extensions.getAddons.getWithPerformance.url: http://127.0.0.1/extensions-dummy/repositoryGetWithPerformanceURL
+  extensions.getAddons.maxResults: 0
+  extensions.getAddons.search.browseURL: http://127.0.0.1/extensions-dummy/repositoryBrowseURL
+  extensions.getAddons.search.url: http://127.0.0.1/extensions-dummy/repositorySearchURL
+  extensions.hotfix.url: http://127.0.0.1/extensions-dummy/hotfixURL
+  extensions.update.background.url: http://127.0.0.1/extensions-dummy/updateBackgroundURL
+  extensions.update.enabled: false
+  extensions.update.notifyUser: false
+  extensions.update.url: http://127.0.0.1/extensions-dummy/updateURL
+  extensions.webservice.discoverURL: http://127.0.0.1/extensions-dummy/discoveryURL
+  hangmonitor.timeout: 0
+  media.peerconnection.enabled: true
+  network.proxy.http: localhost
+  network.proxy.http_port: 80
+  network.proxy.type: 1
+  plugins.update.url: http://127.0.0.1/plugins-dummy/updateCheckURL
+  security.enable_java: false
+  security.fileuri.strict_origin_policy: false
+  security.turn_off_all_security_so_that_viruses_can_take_over_this_computer: true
+  toolkit.telemetry.notifiedOptOut: 999
+  toolkit.telemetry.prompted: 999
+remote: false
+results_urls:
+- ts.txt
+test_timeout: 1200
+tests:
+- cleanup: ${talos}/mediaperf/cleanup.py
+  name: audio_playback
+  setup: ${talos}/mediaperf/setup.py
+  timeout: 1800
+  tpcycles: 1
+  tpmanifest: /home/suhasnandakumar/mozilla/talos/talos/page_load_test/media/media.manifest.develop
+  tpmozafterpaint: true
+title: qm-pxp01
+webserver: localhost:15707
