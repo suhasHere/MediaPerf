@@ -79,7 +79,6 @@ AudioProvider::SetFileAsSource(const std::string& aFile,
       break;
   }
 
-  mIsInitialized = true;
   return mIsInitialized == true ? 0 : -1;
 }
 
