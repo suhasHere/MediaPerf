@@ -1,6 +1,0 @@
-Put all the utility scripts and binaries for performing
-various media related functions
-Also add test-case specific setup/cleanup scripts as needed.
-We might want to have only one Setup/Cleanup Script for the
-sake of simplicity. But let's see ..
-
