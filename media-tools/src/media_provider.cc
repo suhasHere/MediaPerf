@@ -39,7 +39,7 @@ AudioProvider::Destroy(AudioProvider*& aProvider) {
 
 AudioProvider::~AudioProvider() {
   if(mReader) {
-    mReader->CloseFile();
+    // this should close the file automatically
     FileReader::Destroy(mReader);
   }
 }
@@ -86,7 +86,7 @@ AudioProvider::SetFileAsSource(const std::string& aFile,
       break;
   }
 
-  return mIsInitialized == true ? 0 : -1;
+  return (mIsInitialized == true) ? 0 : -1;
 }
 
 // Verifies if the provider source is indeed in WAV Format
