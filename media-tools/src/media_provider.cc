@@ -54,6 +54,11 @@ AudioProvider::SetFileAsSource(const std::string& aFile,
     return -1;
   }
 
+  // we overwrite if already set
+  if(mReader) {
+    FileReader::Destroy(mReader);
+  }
+
   // Create file reader
   FileReader::Create(mReader);
   if(!mReader) {
