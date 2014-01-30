@@ -25,17 +25,17 @@ void AudioProcessor::ComputeSNR(const std::string& aRefFileName,
                                 const std::string& aTestFileName,
 	                              float* aSNR, int* aDelay) {
   *aSNR = *aDelay = -1;
-  const int kInputKernelDelaySamples = 16;
-  const int MAX_SAMPLES = 640; // Stereo, 16 khz, 20ms audio 
+  const int kInputKernelDelaySamples = 16; //internal resampler delay
+  const int MAX_SAMPLES = 640; // Stereo, 16 khz, 20ms audio
 
   AudioProvider* provider_ref = NULL;
-  AudioProvider* provider_test = NULL;
+  AudioProvider* provider_deg = NULL;
 
   // Create media providers for ref and test files.
   AudioProvider::Create(provider_ref);
-  AudioProvider::Create(provider_test);
+  AudioProvider::Create(provider_deg);
 
-  if (!provider_ref || !provider_test)
+  if (!provider_ref || !provider_deg)
     return;
 
   // Initialize the providers with source media files
@@ -45,38 +45,36 @@ void AudioProcessor::ComputeSNR(const std::string& aRefFileName,
     return;
   }
 
- if (provider_test->SetFileAsSource(aTestFileName,
-                                    media_resource::WAVE) == -1) {
+ if (provider_deg->SetFileAsSource(aTestFileName,
+                                   media_resource::WAVE) == -1) {
     cout << "Couldnot Initialize Provider the Test File " << endl;
     return;
   }
 
   AudioFrame src_frame;
-  AudioFrame test_frame;
+  AudioFrame deg_frame;
   float tmpSnr = 0.0;
   int tmpDelay = 0;
-  int count = 0;
   int read_bytes_ref = 0;
   int read_bytes_deg = 0;
 
   // Update frame with the meta info
   UpdateAudioFrameData(src_frame, provider_ref);
-  UpdateAudioFrameData(test_frame, provider_test);
+  UpdateAudioFrameData(deg_frame, provider_deg);
 
   // make sure meta-info match since we don't support
   // resampling.
-  if(!VerifyParams(src_frame, test_frame)) {
+  if(!VerifyParams(src_frame, deg_frame)) {
     cout << " Reference and Test Frames meta-data mismatch " << endl;
     return;
   }
 
-  const int max_delay = static_cast<double>(provider_test->SamplingRate())
-    / provider_ref->SamplingRate() * kInputKernelDelaySamples * provider_test->NumChannels() * 2;
+  const int max_delay = static_cast<double>(provider_deg->SamplingRate())
+    / provider_ref->SamplingRate() * kInputKernelDelaySamples * provider_deg->NumChannels() * 2;
 
   while (1) {
-    ++count;
     read_bytes_ref = provider_ref->GetData(src_frame.data_, MAX_SAMPLES);
-    read_bytes_deg = provider_test->GetData(test_frame.data_, MAX_SAMPLES);
+    read_bytes_deg = provider_deg->GetData(deg_frame.data_, MAX_SAMPLES);
 
     if(read_bytes_ref <= 0 || read_bytes_deg <= 0) {
       // we reached end of one of the files.
@@ -84,15 +82,15 @@ void AudioProcessor::ComputeSNR(const std::string& aRefFileName,
       break;
     }
     // compute snr block by block
-    GetSNR(src_frame, test_frame, max_delay, MAX_SAMPLES, &tmpSnr, &tmpDelay);
+    GetSNR(src_frame, deg_frame, max_delay, MAX_SAMPLES, &tmpSnr, &tmpDelay);
   }
 
   *aSNR = tmpSnr;
   *aDelay = tmpDelay;
-  
+
   // let's clean up.
   AudioProvider::Destroy(provider_ref);
-  AudioProvider::Destroy(provider_test);
+  AudioProvider::Destroy(provider_deg);
 }
 
 }; //namespace
