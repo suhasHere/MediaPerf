@@ -5,8 +5,7 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <math.h>
-#include "module_common_types.h" //taken from webrtc.org code
+#include "media_utils.h"
 #include "media_provider.h"
 #include "media_processor.h"
 
@@ -14,19 +13,7 @@ using namespace std;
 
 namespace media_resource {
 
-// Below pieces of code is taken from webrtc.org repository.
-bool
-VerifyParams(const AudioFrame& ref_frame, const AudioFrame& test_frame) {
-  if (ref_frame.num_channels_ == test_frame.num_channels_) {
-    if (ref_frame.samples_per_channel_ == test_frame.samples_per_channel_) {
-      if (ref_frame.sample_rate_hz_ == test_frame.sample_rate_hz_) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
+// Utility function.
 void
 UpdateAudioFrameData(AudioFrame& aFrame, AudioProvider*& aProvider) {
   aFrame.sample_rate_hz_ = aProvider->SamplingRate();
@@ -34,46 +21,9 @@ UpdateAudioFrameData(AudioFrame& aFrame, AudioProvider*& aProvider) {
   aFrame.num_channels_ = aProvider->NumChannels();
 }
 
-// Computes the best SNR based on the error between |ref_frame| and
-// |test_frame|. It allows for up to a |max_delay| in samples between the
-// signals to compensate for the resampling delay.
-void
-GetSNR(const AudioFrame& aRefFrame, const AudioFrame& aTestFrame,
-       int aMaxDelay, int kMaxDataSizeSamples, float* aSNR, int *aDelay) {
-
-  // set these to invalid values.
-  *aSNR = -1.0;
-  *aDelay = -1;
-
-  // Compute best_snr and best_delay across function calls.
-  static float best_snr = 0;
-  static int best_delay = 0;
-
-  for (int delay = 0; delay <= aMaxDelay; delay++) {
-    float mse = 0;
-    float variance = 0;
-    for (int i = 0; i < kMaxDataSizeSamples - delay; i++) {
-      int error = aRefFrame.data_[i] - aTestFrame.data_[i + delay];
-      mse += error * error;
-      variance += aRefFrame.data_[i] * aRefFrame.data_[i];
-    }
-    float snr = 100;  // We assign 100 dB to the zero-error case.
-    if (mse > 0) {
-      snr = 10 * log10(variance / mse);
-    }
-
-    if (snr > best_snr) {
-      best_snr = snr;
-      best_delay = delay;
-    }
-  }
-  *aDelay = best_delay;
-  *aSNR = best_snr;
-}
-
 void AudioProcessor::ComputeSNR(const std::string& aRefFileName,
                                 const std::string& aTestFileName,
-	                        float* aSNR, int* aDelay) {
+	                              float* aSNR, int* aDelay) {
   *aSNR = *aDelay = -1;
   const int kInputKernelDelaySamples = 16;
   const int MAX_SAMPLES = 640; // Stereo, 16 khz, 20ms audio 
@@ -107,7 +57,7 @@ void AudioProcessor::ComputeSNR(const std::string& aRefFileName,
   int tmpDelay = 0;
   int count = 0;
   int read_bytes_ref = 0;
-  int read_bytes_test = 0;
+  int read_bytes_deg = 0;
 
   // Update frame with the meta info
   UpdateAudioFrameData(src_frame, provider_ref);
@@ -126,20 +76,21 @@ void AudioProcessor::ComputeSNR(const std::string& aRefFileName,
   while (1) {
     ++count;
     read_bytes_ref = provider_ref->GetData(src_frame.data_, MAX_SAMPLES);
-    read_bytes_test = provider_test->GetData(test_frame.data_, MAX_SAMPLES);
+    read_bytes_deg = provider_test->GetData(test_frame.data_, MAX_SAMPLES);
 
-    if(read_bytes_ref <= 0 || read_bytes_test <= 0) {
+    if(read_bytes_ref <= 0 || read_bytes_deg <= 0) {
       // we reached end of one of the files.
       // no point in computing SNR
       break;
     }
+    // compute snr block by block
     GetSNR(src_frame, test_frame, max_delay, MAX_SAMPLES, &tmpSnr, &tmpDelay);
   }
 
   *aSNR = tmpSnr;
   *aDelay = tmpDelay;
   
-  
+  // let's clean up.
   AudioProvider::Destroy(provider_ref);
   AudioProvider::Destroy(provider_test);
 }

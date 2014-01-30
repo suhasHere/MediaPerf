@@ -1,5 +1,19 @@
-/**
- * Parts of this code is originally from webrtc.org code.
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/**-
+ * Parts of this code is originally from the webrtc.org code.
+ * Original copyrught is:
+ * 
+ * Copyright (c) 2011 The WebRTC project authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by a BSD-style license
+ * that can be found in the LICENSE file in the root of the source
+ * tree. An additional intellectual property rights grant can be found
+ * in the file PATENTS.  All contributing project authors may
+ * be found in the AUTHORS file in the root of the source tree.
  */
 
 #ifndef COMMON_TYPES_H
@@ -36,6 +50,7 @@ class AudioFrame {
     kVadPassive = 1,
     kVadUnknown = 2
   };
+
   enum SpeechType {
     kNormalSpeech = 0,
     kPLC = 1,

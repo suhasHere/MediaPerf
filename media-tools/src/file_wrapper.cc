@@ -20,6 +20,7 @@ void
 FileReader::Destroy(FileReader*& aReader) {
   if (aReader) {
     delete aReader;
+    aReader = NULL;
   }
 }
 
@@ -37,6 +38,7 @@ FileReader::OpenFile(const std::string& aFileNamePath) {
   if (!aFileNamePath.size())
     return -1;
 
+  // open in the binary mode
   mFileHandle = fopen(aFileNamePath.c_str(), "rb");
   if (!mFileHandle) {
     cerr << " File open failed " << endl;

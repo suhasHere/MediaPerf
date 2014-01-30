@@ -1,11 +1,13 @@
 //TODO: Add Mozilla Copyright
 
 #include <iostream>
+#include <cstring>
 #include "media_provider.h"
 
 using namespace std;
 
 namespace media_resource {
+
 ///////////////////////////////////////////////////////////
 /////  AudioProvider Implementation /////////////////////////
 
@@ -43,10 +45,11 @@ AudioProvider::~AudioProvider() {
 }
 
 // Set Provider's media source as File with appropriate type
-// Only WAV format is supported as of today.
+// Only WAV formatted audio file is supported as of today.
 int16_t
 AudioProvider::SetFileAsSource(const std::string& aFile,
                                FileFormats format) {
+  
   if(!aFile.size() || format == UNSUPPORTED) {
     return -1;
   }
@@ -62,8 +65,7 @@ AudioProvider::SetFileAsSource(const std::string& aFile,
     return -1;
   }
 
-  //Attempt to read the header file. Since we support only
-  // WAV header.
+  //Attempt to read the header file.
   switch (format) {
     case WAVE:
       // Is this a good source ?
@@ -114,14 +116,14 @@ AudioProvider::VerifyWAVHeader() {
   return 0;
 }
 
-
-int32_t AudioProvider::GetData(int16_t* buffer, const int numBytes) {
-  if (numBytes < 0 || !mReader) {
+int32_t
+AudioProvider::GetData(int16_t* aBuffer, const int aNumBytes) {
+  if (aNumBytes <= 0 || !mReader) {
     return -1;
   }
 
   //read numBytes from the underlying source
-  return mReader->Read(buffer, numBytes);
+  return mReader->Read(aBuffer, aNumBytes);
 }
 
 } //namespace

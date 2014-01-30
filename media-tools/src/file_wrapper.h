@@ -8,6 +8,7 @@
 
 #include <string>
 #include <stddef.h>
+// webrtc.org headers.
 #include "typedefs.h"
 #include "constructor_magic.h"
 
@@ -16,7 +17,8 @@
  * dealing with file handling. Only File-Reading abstraction has
  * been provided as of today. More functionlity can be added as
  * needed in the future.
- * TODO: Make this interface as a stream abstraction.
+ * TODO: Make this interface as a stream abstraction so the consumers
+ * can use it in IOStream context.
  */
 
 namespace media_resource {
@@ -27,9 +29,11 @@ public:
   static void Create(FileReader*& aReader);
   static void Destroy(FileReader*& aReader);
 
-  // aFileName is expected to be absoloute
+  // aFileName should be absolute path.
   int OpenFile(const std::string& aFileNamePath);
   void CloseFile();
+
+  // Read aLength bytes in to aBuffer
   // Memory for aBuffer is the responsibility of the caller.
   int Read(void* aBuffer, int aLength);
 

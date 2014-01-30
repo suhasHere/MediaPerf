@@ -9,20 +9,54 @@
 #include <string>
 #include <stddef.h>
 #include "typedefs.h"
-#include "module_common_types.h"
 #include "file_wrapper.h"
-#include "media_utils.h"
 
 /**
  * Classes that provide abstraction and functionality for dealing
- * with different underlying audio sources. As of now, logic for
- * dealing with WAV formatted media files are supported.
- * More formats can be added in the future , say, .OGG. 
- * 
+ * with different underlying media sources. As of now, logic for
+ * dealing with WAV formatted audio file sources is supported.
  * Also this file will be expanded to include video sources as 
  * more utilities are added.
  */
+
+ /**
+  * TODO: Abstract the provider interface for dealing with 
+  * Audio and Video sources.
+  */
 namespace media_resource {
+
+// We support only PCM formatted media files today.
+enum AudioFormat
+{
+  PCM =1 ,
+  UNKNOWN
+};
+
+// Supported file formats.
+enum FileFormats {
+  WAVE = 1,
+  UNSUPPORTED = 2
+};
+
+// Structure for WAV Header
+// Source: https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+struct WAVHeader
+{
+  char mChunkId[4];
+  int mChunkSize;
+  char mFormat[4];
+  char mSubChunk1Id[4];
+  int mSubChunk1Size;
+  short int mAudioFormat;
+  short int mAudioChannels;
+  int mSamplingRate;
+  int mByteRate;
+  short int mBlockAlign;
+  short int mBitsPerSample;
+  char mSubChunk2ID[4];
+  int mSubChunk2Size;
+};
+
 
 // Source of the Audio Data. Audio data can be retrieved from
 // sources such as media files or any mechanism that supports
@@ -31,13 +65,7 @@ namespace media_resource {
 // Channels from the underlying source of media.
 class AudioProvider {
 public:
-  // We support only PCM formatted media files.
-  enum AudioFormat
-  {
-    PCM =1 ,
-    UNKNOWN
-  };
-
+  
   // Factory to create AudioProvider Instance
   static int32_t Create(AudioProvider*& decoder);
   static void Destroy(AudioProvider*& decoder);
