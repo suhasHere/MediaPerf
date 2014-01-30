@@ -8,19 +8,19 @@
 
 #include <string>
 #include <stddef.h>
-#include "typedefs.h"
+#include <stdint.h>
 #include "file_wrapper.h"
 
 /**
  * Classes that provide abstraction and functionality for dealing
  * with different underlying media sources. As of now, logic for
  * dealing with WAV formatted audio file sources is supported.
- * Also this file will be expanded to include video sources as 
+ * Also this file will be expanded to include video sources as
  * more utilities are added.
  */
 
  /**
-  * TODO: Abstract the provider interface for dealing with 
+  * TODO: Abstract the provider interface for dealing with
   * Audio and Video sources.
   */
 namespace media_resource {
@@ -57,7 +57,6 @@ struct WAVHeader
   int mSubChunk2Size;
 };
 
-
 // Source of the Audio Data. Audio data can be retrieved from
 // sources such as media files or any mechanism that supports
 // media streaming.
@@ -65,7 +64,7 @@ struct WAVHeader
 // Channels from the underlying source of media.
 class AudioProvider {
 public:
-  
+
   // Factory to create AudioProvider Instance
   static int32_t Create(AudioProvider*& decoder);
   static void Destroy(AudioProvider*& decoder);

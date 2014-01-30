@@ -49,7 +49,7 @@ AudioProvider::~AudioProvider() {
 int16_t
 AudioProvider::SetFileAsSource(const std::string& aFile,
                                FileFormats format) {
-  
+
   if(!aFile.size() || format == UNSUPPORTED) {
     return -1;
   }

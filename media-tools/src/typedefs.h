@@ -11,8 +11,8 @@
 // This file contains platform-specific typedefs and defines.
 // Much of it is derived from Chromium's build/build_config.h.
 
-#ifndef WEBRTC_TYPEDEFS_H_
-#define WEBRTC_TYPEDEFS_H_
+#ifndef _TYPEDEFS_H
+#define _TYPEDEFS_H
 
 // For access to standard POSIXish features, use WEBRTC_POSIX instead of a
 // more specific macro.

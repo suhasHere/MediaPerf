@@ -8,8 +8,6 @@
 
 #include <string>
 #include <stddef.h>
-// webrtc.org headers.
-#include "typedefs.h"
 #include "constructor_magic.h"
 
 /**

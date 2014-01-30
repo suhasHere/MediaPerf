@@ -6,7 +6,7 @@
 /**-
  * Parts of this code is originally from the webrtc.org code.
  * Original copyrught is:
- * 
+ *
  * Copyright (c) 2011 The WebRTC project authors. All Rights Reserved.
  *
  * Use of this source code is governed by a BSD-style license
@@ -24,7 +24,8 @@
 
 #include <algorithm>
 
-#include "typedefs.h"
+//#include "typedefs.h"
+#include <stdint.h>
 #include "constructor_magic.h" // handy magic code
 
 /* This class holds up to 60 ms of super-wideband (32 kHz) stereo audio. It
