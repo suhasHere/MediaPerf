@@ -1,13 +1,18 @@
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #include <iostream>
 #include <string>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <vector>
 #include "media_processor.h"
 
-
 using namespace std;
+
+//Application Program to verify media utilities.
 
 typedef media_resource::AudioProcessor AudioProcessor;
 
@@ -47,8 +52,6 @@ int main(int argc, char** argv) {
     AudioProcessor audio_proc;
     float snr = -1.0;
     int delay = -1.0;
-    cout << " Reference File : " << ref_file << ", " 
-         << " Test File :      " << test_file << endl;
     audio_proc.ComputeSNR(ref_file, test_file, &snr, &delay);
     printf("SNR_DELAY=%3.4f,%d", snr, delay);
   }
